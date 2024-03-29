@@ -11,11 +11,11 @@ type Administrator struct {
 }
 
 func Admin(c *gin.Context) {
-	c.HTML(http.StatusOK, "admin.html", gin.H{})
+	c.HTML(http.StatusOK, "admin/index.tmpl", gin.H{})
 }
 
 func LoginPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "adminLogin.html", gin.H{})
+	c.HTML(http.StatusOK, "admin/login.tmpl", gin.H{})
 }
 
 func Login(c *gin.Context) {

@@ -1,37 +1,59 @@
 package config
 
 import (
-	"time"
+	"errors"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-const TokenExpireDuration = time.Hour * 2
+//const TokenExpireDuration = time.Hour * 2
 
 var MySecret = []byte("Passwd!@#") // 生成签名的密钥
-// 登录成功后调用，传入UserInfo结构体
 
-type MyClaims struct {
-	User           interface{}
-	StandardClaims interface{}
+// GenJWT 生成JWT
+func GenJWT(username string, isAdmin bool) (string, error) {
+	// 创建一个我们自己的声明
+	c := jwt.MapClaims{
+		"username": username,
+		"is_admin": isAdmin, // 自定义字段
+	}
+	// 使用指定的签名方法创建签名对象
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
+	// 使用指定的secret签名并获得完整的编码后的字符串token
+	return token.SignedString(MySecret)
 }
 
-//func SetCookie(c *gin.Context, username string) (string, int) {
-//	expirationTime := time.Now().Add(TokenExpireDuration) // 两个小时有效期
-//	claims := &MyClaims{
-//		User: userInfo,
-//		StandardClaims: jwt.StandardClaims{
-//			ExpiresAt: expirationTime.Unix(),
-//			Issuer:    "yourname",
-//		},
-//	}
-//	// 生成Token，指定签名算法和claims
-//	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-//	// 签名
-//	if tokenString, err := token.SignedString(MySecret); err != nil {
-//		return "", err
-//	} else {
-//		return tokenString, nil
-//	}
-//
-//	c.SetCookie("gin-cookie", username, 3600, "/", "localhost", true, true)
-//	return 0
-//}
+func Verify(c *gin.Context) string {
+	tokenString, _ := c.Cookie("gin_cookie")
+	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return MySecret, nil
+	})
+
+	switch {
+	case err == nil:
+		return ""
+	case errors.Is(err, jwt.ErrTokenMalformed):
+		return "That's not even a token"
+	case errors.Is(err, jwt.ErrTokenSignatureInvalid):
+		// Invalid signature
+		return "Invalid signature"
+	case errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet):
+		// Token is either expired or not active yet
+		return "Timing is everything"
+	default:
+		return "Couldn't handle this token"
+	}
+}
+
+func GetCookieValue(c *gin.Context, key string) string {
+	cookie, _ := c.Cookie("gin_cookie")
+	JWT, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
+		return []byte("AllYourBase"), nil
+	})
+
+	if err != nil {
+		return ""
+	}
+
+	return JWT.Claims.(jwt.MapClaims)[key].(string)
+}
