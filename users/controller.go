@@ -101,4 +101,9 @@ func Upload(c *gin.Context) {
 		}
 	}
 	c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
+
+	// todo disposer.classify(path) path
+	// todo Create ImgTable{ path, id/username}
 }
+
+// todo spider(url) (path,err) -> classify(path) path -> Create ImgTable{ path, id/username}
