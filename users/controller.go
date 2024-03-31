@@ -41,7 +41,7 @@ func Login(c *gin.Context) {
 
 	// 分配cookie
 	if err == nil {
-		cookie, err = config.GenJWT(_userForm.UserName, false)
+		cookie, err = config.GenJWT(UserTable.UserName, false)
 	} else {
 		c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"error": err})
 		return

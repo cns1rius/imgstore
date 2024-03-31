@@ -48,7 +48,7 @@ func Verify(c *gin.Context) string {
 func GetCookieValue(c *gin.Context, key string) string {
 	cookie, _ := c.Cookie("gin_cookie")
 	JWT, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
-		return []byte("AllYourBase"), nil
+		return MySecret, nil
 	})
 
 	if err != nil {
