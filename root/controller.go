@@ -9,6 +9,7 @@ import (
 func IndexPage(c *gin.Context) {
 	if err := config.Verify(c); err != "" { // 应该为cookie鉴权
 		c.Redirect(http.StatusFound, "/login")
+		return
 	}
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 

@@ -95,12 +95,7 @@ func Upload(c *gin.Context) {
 
 	for _, file := range files {
 		log.Println(file.Filename)
-
-		Username := config.GetCookieValue(c, "username")
-		if Username == "" {
-			return
-		}
-		dst := "img/" + Username
+		dst := "./pictures/tmp/"
 		if err := c.SaveUploadedFile(file, dst); err != nil {
 			return
 		}
