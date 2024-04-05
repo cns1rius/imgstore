@@ -60,3 +60,5 @@ func downLoad(pwd string, url string) (string, error) {
 	}
 	return path, nil
 }
+
+// todo 存在任意文件上传 可能无法利用

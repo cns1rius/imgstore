@@ -11,3 +11,4 @@ db:
   UserName: root
   Password: 81889592
   Charset: utf8
+# 漏洞: 任意目录上传(复制后读取)、SQL注入、JWT伪造、恶意文件下载

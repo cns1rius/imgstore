@@ -19,7 +19,7 @@ func Init() *gin.Engine {
 
 	r.LoadHTMLGlob("template/**/*")
 	r.Static("/static", "./static")
-	r.Static("/static", "./pictures")
+	r.Static("/img", "./pictures")
 
 	for _, opt := range options {
 		opt(r)

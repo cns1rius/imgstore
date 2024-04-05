@@ -10,5 +10,6 @@ func Router(r *gin.Engine) {
 	r.POST("/register", Register)
 
 	r.POST("/upload", Upload)
+	//r.GET("/invoke", test)
 
 }
