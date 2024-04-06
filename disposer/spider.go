@@ -22,7 +22,7 @@ func spider(url string) (string, error) {
 	re := regexp.MustCompile(`https?://\s+?\.(?:jpg|jpeg|png|gif|bmp|svg)`)
 	imgUrls := re.FindAllString(string(body), -1)
 	for _, value := range imgUrls {
-		path, err := downLoad("./pictures/tmp", value)
+		path, err := downLoad("./img/tmp", value)
 		if err != nil {
 			return "", err
 		} else {

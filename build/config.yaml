@@ -1,0 +1,14 @@
+server: # 应用基本配置
+  env: local # 环境名称
+  port: 8080 # 服务监听端口号
+  app_name: img-store # 应用名称
+  app_url: http://localhost # 应用域名
+db:
+  DriverName: mysql
+  Database: gin
+  Host: 127.0.0.1
+  Port: 3306
+  UserName: root
+  Password: 81889592
+  Charset: utf8
+# 漏洞: 任意目录上传(复制后读取)、SQL注入、JWT伪造、恶意文件下载

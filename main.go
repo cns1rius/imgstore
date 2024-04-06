@@ -4,7 +4,6 @@ import (
 	"github.com/cns1rius/imgstore/admin"
 	"github.com/cns1rius/imgstore/config"
 	"github.com/cns1rius/imgstore/root"
-	"github.com/cns1rius/imgstore/router"
 	"github.com/cns1rius/imgstore/users"
 	"log"
 )
@@ -14,9 +13,9 @@ func main() {
 	config.InitDB()
 
 	// 加载多个APP的路由配置
-	router.Include(root.Router, users.Router, admin.Router)
+	config.Include(root.Router, users.Router, admin.Router)
 	// 初始化路由
-	r := router.Init()
+	r := config.Init()
 	log.Printf("service startup at http://localhost:%s\n", config.Conf.GetString("server.port"))
 	log.Println(r.Run(":" + config.Conf.GetString("server.port")))
 	//if err := r.Run(":" + config.Conf.GetString("server.port")); err != nil {
