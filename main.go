@@ -19,9 +19,6 @@ var tmpl embed.FS
 //go:embed static/*
 var Static embed.FS
 
-//go:embed img/*
-var Imgs embed.FS
-
 func main() {
 	config.InitConfig()
 	config.InitDB()
@@ -38,8 +35,7 @@ func main() {
 	Static, _ := fs.Sub(Static, "static")
 	r.StaticFS("/static", http.FS(Static))
 	// img pictures
-	Imgs, _ := fs.Sub(Imgs, "img")
-	r.StaticFS("/img", http.FS(Imgs))
+	r.Static("/img", "./img")
 	// route init
 	r = config.Init(r)
 
