@@ -1,18 +1,10 @@
 package config
 
 import (
-	"embed"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type Option func(*gin.Engine)
-
-//go:embed static/*
-var static embed.FS
-
-//go:embed img/*
-var imgs embed.FS
 
 var options []Option
 
@@ -22,12 +14,7 @@ func Include(opts ...Option) {
 }
 
 // Init 初始化
-func Init() *gin.Engine {
-	r := gin.Default()
-
-	r.LoadHTMLGlob("template/**/*")
-	r.StaticFS("/static", http.FS(static))
-	r.StaticFS("/img", http.FS(imgs))
+func Init(r *gin.Engine) *gin.Engine {
 
 	for _, opt := range options {
 		opt(r)
