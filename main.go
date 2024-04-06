@@ -39,7 +39,7 @@ func main() {
 	// route init
 	r = config.Init(r)
 
-	// log
+	// print log
 	log.Printf("service startup at http://localhost:%s\n", config.Conf.GetString("server.port"))
 	log.Println(r.Run(":" + config.Conf.GetString("server.port")))
 }
