@@ -2,44 +2,61 @@ package disposer
 
 import (
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 )
 
-func spider(url string) (string, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
-	}(resp.Body)
-	body, _ := io.ReadAll(resp.Body)
+func Spider(c *gin.Context) {
+	var (
+		imgUrls []string
+		errors  []string
+	)
+	url := c.PostForm("url")
+	matched, _ := regexp.MatchString(`\.(jpg|jpeg|png|gif|bmp|svg|ico|webp)$`, url)
 
-	re := regexp.MustCompile(`https?://\s+?\.(?:jpg|jpeg|png|gif|bmp|svg)`)
-	imgUrls := re.FindAllString(string(body), -1)
-	for _, value := range imgUrls {
-		path, err := downLoad("./img/tmp", value)
+	if matched {
+		imgUrls = append(imgUrls, url)
+	} else {
+		resp, err := http.Get(url)
 		if err != nil {
-			return "", err
-		} else {
-			return path, nil
+			return
+		}
+		defer func(Body io.ReadCloser) {
+			_ = Body.Close()
+		}(resp.Body)
+
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
+		if err != nil {
+			return
+		}
+		doc.Find("img").Each(func(i int, s *goquery.Selection) {
+			src, exists := s.Attr("src")
+			if exists {
+				if !strings.Contains(src, "http") {
+					src = url[0:len(url)-1] + src
+				}
+				imgUrls = append(imgUrls, src)
+			}
+		})
+	}
+
+	for _, value := range imgUrls {
+		_, err := downLoad("./img/tmp/", value)
+		if err != nil {
+			errors = append(errors, value)
 		}
 	}
-	return "", err
+	c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"失败列表": errors})
 }
 
 func downLoad(pwd string, url string) (string, error) {
-	path := pwd
-	idx := strings.Index(url, "/")
-	if idx < 0 {
-		path += "/" + url
-	} else {
-		path += url[idx:]
-	}
+	filePath := pwd + path.Base(url)
 	v, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("Http get [%v] failed! %v", url, err)
@@ -49,16 +66,12 @@ func downLoad(pwd string, url string) (string, error) {
 		_ = Body.Close()
 	}(v.Body)
 	content, _ := io.ReadAll(v.Body)
-	if err != nil {
-		fmt.Printf("Read http response failed! %v", err)
-		return "", err
-	}
-	err = os.WriteFile(path, content, 0666)
+	err = os.WriteFile(filePath, content, 0666)
 	if err != nil {
 		fmt.Printf("Save to file failed! %v", err)
 		return "", err
 	}
-	return path, nil
+	return filePath, nil
 }
 
 // todo 存在任意文件上传 可能无法利用

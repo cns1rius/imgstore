@@ -4,6 +4,7 @@ import (
 	"embed"
 	"github.com/cns1rius/imgstore/admin"
 	"github.com/cns1rius/imgstore/config"
+	"github.com/cns1rius/imgstore/disposer"
 	"github.com/cns1rius/imgstore/root"
 	"github.com/cns1rius/imgstore/users"
 	"github.com/gin-gonic/gin"
@@ -24,7 +25,7 @@ func main() {
 	config.InitDB()
 
 	// 加载多个APP的路由配置
-	config.Include(root.Router, users.Router, admin.Router)
+	config.Include(root.Router, users.Router, admin.Router, disposer.Router)
 
 	// 初始化gin
 	r := gin.Default()

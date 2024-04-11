@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/buger/jsonparser"
+	"github.com/cns1rius/imgstore/config"
 	"io"
 	"net/http"
 	"os"
@@ -19,7 +20,7 @@ func classify(path string) string {
 	b64Img := base64.StdEncoding.EncodeToString(img)
 	payload := strings.NewReader(fmt.Sprintf("image=%s", b64Img))
 
-	url := "https://aip.baidubce.com/rest/2.0/image-classify/v2/advanced_general?access_token="
+	url := "https://aip.baidubce.com/rest/2.0/image-classify/v2/advanced_general?access_token=" + config.Conf.GetString("set.baidu_aip")
 	res, err := http.Post(url, "application/x-www-form-urlencoded", payload)
 	if !(err == nil) {
 		return ""

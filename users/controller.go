@@ -1,12 +1,13 @@
 package users
 
 import (
+	"crypto/md5"
 	"fmt"
 	"github.com/cns1rius/imgstore/config"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
-	"log"
 	"net/http"
+	"os"
 )
 
 type UserForm struct {
@@ -33,6 +34,8 @@ func Login(c *gin.Context) {
 		c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"error": "用户名或密码不能为空"})
 		return
 	}
+
+	_userForm.Password = string(md5.New().Sum([]byte(_userForm.Password)))
 
 	// 查询user表
 	DB, cookie := config.DB, ""
@@ -67,6 +70,8 @@ func Register(c *gin.Context) {
 		return
 	}
 
+	_userForm.Password = string(md5.New().Sum([]byte(_userForm.Password)))
+
 	UserTable := config.User{
 		UserName: _userForm.UserName,
 		Password: _userForm.Password,
@@ -77,6 +82,7 @@ func Register(c *gin.Context) {
 	err := DB.Create(&UserTable).Error
 
 	if err == nil {
+		_ = os.MkdirAll(fmt.Sprintf("./img/%s/", _userForm.UserName), os.ModePerm)
 		c.Redirect(http.StatusFound, "/login")
 	} else {
 		switch err.(*mysql.MySQLError).Number {
@@ -86,25 +92,6 @@ func Register(c *gin.Context) {
 			c.HTML(http.StatusOK, "user/register.tmpl", gin.H{"error": "注册失败"})
 		}
 	}
-}
-
-func Upload(c *gin.Context) {
-	// Multipart form
-	form, _ := c.MultipartForm()
-	files := form.File["upload[]"]
-
-	for _, file := range files {
-		log.Println(file.Filename)
-		dst := "./img/tmp/"
-		// todo 存在任意目录上传 可通过文件名覆盖 复制时能把关键文件复制过来
-		if err := c.SaveUploadedFile(file, dst); err != nil {
-			return
-		}
-	}
-	c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
-
-	// todo disposer.classify(path) path
-	// todo Create ImgTable{ path, id/username}
 }
 
 // todo spider(url) (path,err) -> classify(path) path -> Create ImgTable{ path, id/username}

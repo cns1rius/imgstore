@@ -25,4 +25,7 @@ func InitConfig() {
 	if err := Conf.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("read config failed: %s \n", err))
 	}
+
+	// 初始化img文件夹
+	_ = os.MkdirAll("./img/tmp/", os.ModePerm)
 }
