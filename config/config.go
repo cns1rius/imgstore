@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	Conf *viper.Viper
+	Conf  *viper.Viper
+	Types = []string{"人物", "物品", "风景", "动物", "植物", "其他"}
 )
 
 func InitConfig() {
@@ -28,4 +29,7 @@ func InitConfig() {
 
 	// 初始化img文件夹
 	_ = os.MkdirAll("./img/tmp/", os.ModePerm)
+	for _, t := range Types {
+		_ = os.MkdirAll("./img/"+t+"/", os.ModePerm)
+	}
 }

@@ -14,8 +14,9 @@ import (
 
 func Spider(c *gin.Context) {
 	var (
-		imgUrls []string
-		errors  []string
+		imgUrls  []string
+		errors   []string
+		filePath []string
 	)
 	url := c.PostForm("url")
 	matched, _ := regexp.MatchString(`\.(jpg|jpeg|png|gif|bmp|svg|ico|webp)$`, url)
@@ -47,12 +48,15 @@ func Spider(c *gin.Context) {
 	}
 
 	for _, value := range imgUrls {
-		_, err := downLoad("./img/tmp/", value)
+		tmpPath, err := downLoad("./img/tmp/", value)
 		if err != nil {
 			errors = append(errors, value)
 		}
+		filePath = append(filePath, tmpPath)
 	}
-	c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"失败列表": errors})
+	// c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"失败列表": errors})
+	// 调用classify 然后传库
+	classify(c, filePath, errors)
 }
 
 func downLoad(pwd string, url string) (string, error) {

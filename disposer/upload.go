@@ -14,7 +14,7 @@ func Upload(c *gin.Context) {
 
 	for _, file := range files {
 		log.Println(file.Filename)
-		dst := "./img/tmp/"
+		dst := "./img/tmp/" + file.Filename
 		// todo 存在任意目录上传 可通过文件名覆盖 复制时能把关键文件复制过来
 		if err := c.SaveUploadedFile(file, dst); err != nil {
 			return

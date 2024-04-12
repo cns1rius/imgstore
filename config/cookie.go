@@ -11,10 +11,10 @@ import (
 var MySecret = []byte("Passwd!@#") // 生成签名的密钥
 
 // GenJWT 生成JWT
-func GenJWT(username string, isAdmin bool) (string, error) {
+func GenJWT(id uint, isAdmin bool) (string, error) {
 	// 创建一个我们自己的声明
 	c := jwt.MapClaims{
-		"username": username,
+		"id":       id,
 		"is_admin": isAdmin, // 自定义字段
 	}
 	// 使用指定的签名方法创建签名对象
@@ -45,15 +45,15 @@ func Verify(c *gin.Context) string {
 	}
 }
 
-func GetCookieValue(c *gin.Context, key string) string {
+func GetCookieId(c *gin.Context) int {
 	cookie, _ := c.Cookie("gin_cookie")
 	JWT, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
 		return MySecret, nil
 	})
 
 	if err != nil {
-		return ""
+		return -1
 	}
 
-	return JWT.Claims.(jwt.MapClaims)[key].(string)
+	return JWT.Claims.(jwt.MapClaims)["id"].(int)
 }

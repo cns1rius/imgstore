@@ -2,12 +2,12 @@ package users
 
 import (
 	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"github.com/cns1rius/imgstore/config"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
 	"net/http"
-	"os"
 )
 
 type UserForm struct {
@@ -44,7 +44,7 @@ func Login(c *gin.Context) {
 
 	// 分配cookie
 	if err == nil {
-		cookie, err = config.GenJWT(UserTable.UserName, false)
+		cookie, err = config.GenJWT(UserTable.ID, false)
 	} else {
 		c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"error": err})
 		return
@@ -70,7 +70,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	_userForm.Password = string(md5.New().Sum([]byte(_userForm.Password)))
+	_userForm.Password = hex.EncodeToString(md5.New().Sum([]byte(_userForm.Password)))
 
 	UserTable := config.User{
 		UserName: _userForm.UserName,
@@ -82,7 +82,6 @@ func Register(c *gin.Context) {
 	err := DB.Create(&UserTable).Error
 
 	if err == nil {
-		_ = os.MkdirAll(fmt.Sprintf("./img/%s/", _userForm.UserName), os.ModePerm)
 		c.Redirect(http.StatusFound, "/login")
 	} else {
 		switch err.(*mysql.MySQLError).Number {
@@ -93,5 +92,3 @@ func Register(c *gin.Context) {
 		}
 	}
 }
-
-// todo spider(url) (path,err) -> classify(path) path -> Create ImgTable{ path, id/username}

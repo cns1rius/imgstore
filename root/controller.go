@@ -13,5 +13,7 @@ func IndexPage(c *gin.Context) {
 	}
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 
-	// 根据cookie显示所能访问的图片及信息
+	// todo 根据cookie显示所能访问的图片及信息
+	// todo 显示typeTags“文件夹” 点击整框url get 跳转
+	// todo 公有文件夹进去再有分类
 }

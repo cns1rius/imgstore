@@ -1,10 +1,12 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"strings"
 )
 
 var (
@@ -51,4 +53,51 @@ func InitDB() {
 		panic(err)
 	}
 	DB = db
+}
+
+// imgPathPath todo path->path path->permissions permission->path
+// 路径获得路径来判断有无 路径获得权限来判断是否需要更新 权限获得路径用于展示图片
+func imgPathPath(path string) string {
+	var ImgTable Img
+	_ = DB.Where("path = ?", path).First(&ImgTable)
+	return ImgTable.Path
+}
+
+func imgPathPermission(path string) string {
+	var ImgTable Img
+	_ = DB.Where("path = ?", path).First(&ImgTable)
+	return ImgTable.Permission
+}
+
+func imgPermissionPath(perm string) []string {
+	var (
+		ImgTables []Img
+		paths     []string
+	)
+	DB.Find(&ImgTables)
+	for _, i := range ImgTables {
+		if strings.Contains(i.Permission, perm) {
+			paths = append(paths, i.Path)
+		}
+	}
+	return paths
+	//_ = DB.Where("permission = ?", perm).First(&ImgTable)
+	//return ImgTable.Permission
+}
+
+func ImgUpdate(path string, permission int) error {
+	perm := string(rune(permission))
+	ImgTable := Img{
+		Path:       path,
+		Permission: perm,
+	}
+	if imgPathPath(path) == "" {
+		err := DB.Create(&ImgTable).Error
+		return err
+	} else if !strings.Contains(imgPathPermission(path), perm) {
+		perm = imgPathPermission(path) + perm
+		err := DB.Model(&ImgTable).Updates(Img{Path: path, Permission: perm}).Error
+		return err
+	}
+	return errors.New("already in your store")
 }
