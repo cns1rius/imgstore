@@ -8,7 +8,7 @@ import (
 
 var (
 	Conf  *viper.Viper
-	Types = []string{"人物", "物品", "风景", "动物", "植物", "其他"}
+	Types = []string{"人物", "风景", "动物", "植物", "动漫", "图像", "物品", "其他"}
 )
 
 func InitConfig() {

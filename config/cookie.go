@@ -54,6 +54,6 @@ func GetCookieId(c *gin.Context) int {
 	if err != nil {
 		return -1
 	}
-
-	return JWT.Claims.(jwt.MapClaims)["id"].(int)
+	id := int(JWT.Claims.(jwt.MapClaims)["id"].(float64))
+	return id
 }

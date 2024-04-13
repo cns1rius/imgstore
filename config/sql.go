@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"strconv"
 	"strings"
 )
 
@@ -55,7 +56,7 @@ func InitDB() {
 	DB = db
 }
 
-// imgPathPath todo path->path path->permissions permission->path
+// path->path path->permissions permission->path
 // 路径获得路径来判断有无 路径获得权限来判断是否需要更新 权限获得路径用于展示图片
 func imgPathPath(path string) string {
 	var ImgTable Img
@@ -86,7 +87,7 @@ func imgPermissionPath(perm string) []string {
 }
 
 func ImgUpdate(path string, permission int) error {
-	perm := string(rune(permission))
+	perm := strconv.Itoa(permission)
 	ImgTable := Img{
 		Path:       path,
 		Permission: perm,

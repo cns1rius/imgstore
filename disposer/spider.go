@@ -42,6 +42,9 @@ func Spider(c *gin.Context) {
 				if !strings.Contains(src, "http") {
 					src = url[0:len(url)-1] + src
 				}
+				if strings.Contains(src, "?") {
+					src = strings.Split(src, "?")[0]
+				}
 				imgUrls = append(imgUrls, src)
 			}
 		})
@@ -53,6 +56,7 @@ func Spider(c *gin.Context) {
 			errors = append(errors, value)
 		}
 		filePath = append(filePath, tmpPath)
+		c.JSON(http.StatusOK, gin.H{"已下载": filePath, "失败列表": errors})
 	}
 	// c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"失败列表": errors})
 	// 调用classify 然后传库

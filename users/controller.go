@@ -35,7 +35,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	_userForm.Password = string(md5.New().Sum([]byte(_userForm.Password)))
+	_userForm.Password = hex.EncodeToString(md5.New().Sum([]byte(_userForm.Password)))
 
 	// 查询user表
 	DB, cookie := config.DB, ""
