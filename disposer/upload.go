@@ -8,6 +8,10 @@ import (
 )
 
 func Upload(c *gin.Context) {
+	var (
+		errs      []string
+		filePaths []string
+	)
 	// Multipart form
 	form, _ := c.MultipartForm()
 	files := form.File["upload[]"]
@@ -17,11 +21,12 @@ func Upload(c *gin.Context) {
 		dst := "./img/tmp/" + file.Filename
 		// todo 存在任意目录上传 可通过文件名覆盖 复制时能把关键文件复制过来
 		if err := c.SaveUploadedFile(file, dst); err != nil {
-			return
+			errs = append(errs, err.Error())
 		}
+		filePaths = append(filePaths, dst)
 	}
 	c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
 
-	// todo disposer.classify(path) path
-	// todo Create ImgTable{ path, id/username}
+	// classify(c, filePaths, errs)
+	classify(c, filePaths, errs)
 }

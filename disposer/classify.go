@@ -14,13 +14,13 @@ import (
 	"strings"
 )
 
-func classify(c *gin.Context, filePath []string, errors []string) {
+func classify(c *gin.Context, filePaths []string, errors []string) {
 	var (
 		typeTag string
 		tmpTag  string
 	)
 	types := config.Types
-	for _, path := range filePath {
+	for _, path := range filePaths {
 		// ai.baidu.com api 识别 -> 匹配关键字
 		img, _ := os.ReadFile(path)
 		b64Img := url.QueryEscape(base64.StdEncoding.EncodeToString(img))
