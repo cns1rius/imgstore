@@ -26,6 +26,7 @@ func Spider(c *gin.Context) {
 	} else {
 		resp, err := http.Get(url)
 		if err != nil {
+			c.HTML(http.StatusOK, "root/redirect.tmpl", gin.H{"error": err, "href": "返回主页"})
 			return
 		}
 		defer func(Body io.ReadCloser) {
@@ -34,6 +35,7 @@ func Spider(c *gin.Context) {
 
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
+			c.HTML(http.StatusOK, "root/redirect.tmpl", gin.H{"error": err, "href": "返回主页"})
 			return
 		}
 		doc.Find("img").Each(func(i int, s *goquery.Selection) {
@@ -50,15 +52,26 @@ func Spider(c *gin.Context) {
 		})
 	}
 
+	w := c.Writer
+	w.Header().Set("Transfer-Encoding", "chunked") // 设置响应头以启用 chunked transfer encoding
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusFound)
+	_, _ = w.Write([]byte("<script>\nalert(\"Downloading...\");\n</script>"))
+	w.(http.Flusher).Flush()
+
 	for _, value := range imgUrls {
 		tmpPath, err := downLoad("./img/tmp/", value)
 		if err != nil {
 			errors = append(errors, value)
+			_, _ = w.Write([]byte(fmt.Sprintf("%v failed", value)))
+			w.(http.Flusher).Flush()
+			continue
 		}
 		filePath = append(filePath, tmpPath)
-		c.JSON(http.StatusOK, gin.H{"已下载": filePath, "失败列表": errors})
+
+		_, _ = w.Write([]byte(fmt.Sprintf("%v succeed", filePath)))
+		w.(http.Flusher).Flush()
 	}
-	// c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"失败列表": errors})
 	// 调用classify 然后传库
 	classify(c, filePath, errors)
 }
@@ -67,7 +80,7 @@ func downLoad(pwd string, url string) (string, error) {
 	filePath := pwd + path.Base(url)
 	v, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("Http get [%v] failed! %v", url, err)
+		_, _ = fmt.Fprint(gin.DefaultWriter, fmt.Sprintf("[GIN] Http get [%v] failed! %v", url, err))
 		return "", err
 	}
 	defer func(Body io.ReadCloser) {
@@ -76,7 +89,7 @@ func downLoad(pwd string, url string) (string, error) {
 	content, _ := io.ReadAll(v.Body)
 	err = os.WriteFile(filePath, content, 0666)
 	if err != nil {
-		fmt.Printf("Save to file failed! %v", err)
+		_, _ = fmt.Fprint(gin.DefaultWriter, fmt.Sprintf("[GIN] Save to file failed! %v", err))
 		return "", err
 	}
 	return filePath, nil

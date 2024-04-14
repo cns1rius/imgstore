@@ -1,0 +1,34 @@
+{{ define "root/redirect.tmpl" }}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>home</title>
+        <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+        <script src="../static/js/jquery.min.js"></script>
+        <script src="../static/js/bootstrap.min.js"></script>
+        <style>
+            div.error {
+                display: flex;
+                justify-content: center;
+                /*align-items: center;*/
+            }
+
+            div.href {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body style="background: url(../static/img/background.jpg) no-repeat center 0;background-size: cover; margin: 0;">
+    <div class="error">
+        {{ .error }}
+    </div>
+    <div class="href">
+        <a href="/">{{ .href }}</a>
+    </div>
+    </body>
+    </html>
+
+{{ end }}

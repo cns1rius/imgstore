@@ -1,7 +1,6 @@
 package disposer
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -25,8 +24,14 @@ func Upload(c *gin.Context) {
 		}
 		filePaths = append(filePaths, dst)
 	}
-	c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
 
-	// classify(c, filePaths, errs)
+	w := c.Writer
+	w.Header().Set("Transfer-Encoding", "chunked") // 设置响应头以启用 chunked transfer encoding
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusFound)
+	_, _ = w.Write([]byte("<script>\n  alert(\"Hello World!\");\n</script>\n"))
+	w.(http.Flusher).Flush()
+	//c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
+
 	classify(c, filePaths, errs)
 }

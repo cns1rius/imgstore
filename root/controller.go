@@ -4,13 +4,16 @@ import (
 	"github.com/cns1rius/imgstore/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func IndexPage(c *gin.Context) {
+	var paths []string
 	if err := config.Verify(c); err != "" { // 应该为cookie鉴权
 		c.Redirect(http.StatusFound, "/login")
 		return
 	}
+	paths = config.ImgPermissionPath(strconv.Itoa(1))
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 
 	// todo 根据cookie显示所能访问的图片及信息

@@ -64,5 +64,9 @@ func classify(c *gin.Context, filePaths []string, errors []string) {
 		// 传库
 		_ = config.ImgUpdate(newPath, config.GetCookieId(c))
 	}
-	c.HTML(http.StatusOK, "user/login.tmpl", gin.H{"error": errors})
+	errorStr := strings.Join(errors, "\n")
+	if errorStr == "" {
+		errorStr = "Succeed!"
+	}
+	c.HTML(http.StatusOK, "root/redirect.tmpl", gin.H{"error": errorStr, "href": "返回主页"})
 }

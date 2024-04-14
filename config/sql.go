@@ -70,7 +70,7 @@ func imgPathPermission(path string) string {
 	return ImgTable.Permission
 }
 
-func imgPermissionPath(perm string) []string {
+func ImgPermissionPath(perm string) []string {
 	var (
 		ImgTables []Img
 		paths     []string

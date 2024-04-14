@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/cns1rius/imgstore/admin"
 	"github.com/cns1rius/imgstore/config"
 	"github.com/cns1rius/imgstore/disposer"
@@ -41,6 +42,6 @@ func main() {
 	r = config.Init(r)
 
 	// print logs
-	log.Printf("service startup at http://localhost:%s\n", config.Conf.GetString("server.port"))
+	fmt.Printf("[GIN] Service startup at http://localhost:%s\n", config.Conf.GetString("server.port"))
 	log.Println(r.Run(":" + config.Conf.GetString("server.port")))
 }

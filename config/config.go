@@ -2,8 +2,11 @@ package config
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"io"
 	"os"
+	"time"
 )
 
 var (
@@ -12,6 +15,12 @@ var (
 )
 
 func InitConfig() {
+	// gin.SetMode(gin.ReleaseMode)
+	_ = os.MkdirAll("./log/", os.ModePerm)
+	f, _ := os.Create(fmt.Sprintf("log/%s.log", time.Now().Format("2006-01-02")))
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	gin.ForceConsoleColor()
+
 	// 设置配置文件路径
 	config := "config.yaml"
 	// 生产环境可以通过设置环境变量来改变配置文件路径
