@@ -1,0 +1,36 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] HEAD   /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] GET    /img/*filepath            --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] HEAD   /img/*filepath            --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] GET    /                         --> github.com/cns1rius/imgstore/root.IndexPage (3 handlers)
+[GIN-debug] GET    /login                    --> github.com/cns1rius/imgstore/users.LoginPage (3 handlers)
+[GIN-debug] POST   /login                    --> github.com/cns1rius/imgstore/users.Login (3 handlers)
+[GIN-debug] GET    /register                 --> github.com/cns1rius/imgstore/users.RegisterPage (3 handlers)
+[GIN-debug] POST   /register                 --> github.com/cns1rius/imgstore/users.Register (3 handlers)
+[GIN-debug] GET    /admin                    --> github.com/cns1rius/imgstore/admin.Admin (3 handlers)
+[GIN-debug] POST   /admin                    --> github.com/cns1rius/imgstore/admin.Manage (3 handlers)
+[GIN-debug] GET    /admin/login              --> github.com/cns1rius/imgstore/admin.LoginPage (3 handlers)
+[GIN-debug] POST   /admin/login              --> github.com/cns1rius/imgstore/admin.Login (3 handlers)
+[GIN-debug] GET    /manage                   --> github.com/cns1rius/imgstore/admin.Router.func1 (3 handlers)
+[GIN-debug] POST   /upload                   --> github.com/cns1rius/imgstore/disposer.Upload (3 handlers)
+[GIN-debug] POST   /spider                   --> github.com/cns1rius/imgstore/disposer.Spider (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+[GIN] 2024/04/15 - 13:17:07 |[97;42m 200 [0m|      2.5797ms |             ::1 |[97;46m POST    [0m "/login"
+[GIN] 2024/04/15 - 13:17:07 |[90;43m 404 [0m|            0s |             ::1 |[97;44m GET     [0m "/static/css/bootstrap.min.css"
+[GIN] 2024/04/15 - 13:17:07 |[90;43m 404 [0m|            0s |             ::1 |[97;44m GET     [0m "/static/js/jquery.min.js"
+[GIN] 2024/04/15 - 13:17:07 |[90;43m 404 [0m|            0s |             ::1 |[97;44m GET     [0m "/static/js/bootstrap.min.js"
+[GIN] 2024/04/15 - 13:17:07 |[97;42m 200 [0m|     81.0558ms |             ::1 |[97;44m GET     [0m "/static/img/background.jpg"
+[GIN] 2024/04/15 - 13:17:10 |[90;47m 302 [0m|      1.7338ms |             ::1 |[97;46m POST    [0m "/login"
+[GIN] 2024/04/15 - 13:17:10 |[97;42m 200 [0m|      1.7461ms |             ::1 |[97;44m GET     [0m "/"
+[GIN] 2024/04/15 - 13:17:10 |[90;43m 404 [0m|            0s |             ::1 |[97;44m GET     [0m "/static/css/bootstrap.min.css"
+[GIN] 2024/04/15 - 13:17:10 |[90;43m 404 [0m|            0s |             ::1 |[97;44m GET     [0m "/static/js/jquery.min.js"
+[GIN] 2024/04/15 - 13:17:10 |[90;43m 404 [0m|            0s |             ::1 |[97;44m GET     [0m "/static/js/bootstrap.min.js"
+[GIN] 2024/04/15 - 13:17:10 |[97;42m 200 [0m|       799.3µs |             ::1 |[97;44m GET     [0m "/static/img/background.jpg"

@@ -17,6 +17,12 @@
         }
     </style>
     <body style="background: url(../static/img/background.jpg) no-repeat center 0;background-size: cover; margin: 0;">
+    <script>
+        let err = {{ .error }};
+        if (err !== "") {
+            alert("{{ .error }}");
+        }
+    </script>
     <div>
 
         <form action="/login" method="post">
@@ -44,9 +50,7 @@
                     </button>
                     <a href="/register">没有账户？点击注册</a>
                 </div>
-                <div>
-                    {{ .error }}
-                </div>
+
 
             </div>
         </form>

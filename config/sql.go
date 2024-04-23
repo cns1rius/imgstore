@@ -15,13 +15,15 @@ var (
 )
 
 type User struct {
-	ID       uint   `gorm:"primarykey"`
+	gorm.Model
+	// ID       uint   `gorm:"primarykey"`
 	UserName string `gorm:"unique"`
 	Password string
 }
 
 type Img struct {
-	ImgID      uint   `gorm:"primarykey"`
+	gorm.Model
+	// ImgID      uint   `gorm:"primarykey"`
 	Path       string `gorm:"unique"`
 	Permission string `gorm:"not null"`
 }
@@ -70,20 +72,17 @@ func imgPathPermission(path string) string {
 	return ImgTable.Permission
 }
 
-func ImgPermissionPath(perm string) []string {
+func ImgPermissionImg(perm string) []Img {
 	var (
-		ImgTables []Img
-		paths     []string
+		ImgTable []Img
 	)
-	DB.Find(&ImgTables)
-	for _, i := range ImgTables {
-		if strings.Contains(i.Permission, perm) {
-			paths = append(paths, i.Path)
-		}
+	if strings.Contains(Conf.GetString("admin"), perm) {
+		_ = DB.Raw("SELECT * FROM gin_img").Scan(&ImgTable).Error
+		return ImgTable
+	} else {
+		_ = DB.Raw("SELECT * FROM gin_img WHERE FIND_IN_SET(?, permission)", perm).Scan(&ImgTable).Error
+		return ImgTable
 	}
-	return paths
-	//_ = DB.Where("permission = ?", perm).First(&ImgTable)
-	//return ImgTable.Permission
 }
 
 func ImgUpdate(path string, permission int) error {
@@ -95,10 +94,53 @@ func ImgUpdate(path string, permission int) error {
 	if imgPathPath(path) == "" {
 		err := DB.Create(&ImgTable).Error
 		return err
-	} else if !strings.Contains(imgPathPermission(path), perm) {
-		perm = imgPathPermission(path) + perm
+	} else if !containsPerm(imgPathPermission(path), perm) {
+		perm = imgPathPermission(path) + perm + ","
 		err := DB.Model(&ImgTable).Updates(Img{Path: path, Permission: perm}).Error
 		return err
 	}
 	return errors.New("already in your store")
+}
+
+func ImgDelete(imgIDList []int, userID string) {
+	var ImgTable Img
+
+	if strings.Contains(Conf.GetString("admin"), userID) {
+		DB.Delete(&ImgTable, imgIDList)
+	} else {
+		for _, id := range imgIDList {
+			_ = DB.Where("id = ?", id).First(&ImgTable)
+			newPermission := removeIDFromPermission(ImgTable.Permission, userID)
+			if newPermission != "" {
+				_ = DB.Model(&ImgTable).Updates(Img{Path: ImgTable.Path, Permission: newPermission}).Error
+			} else {
+				DB.Delete(&ImgTable, id)
+			}
+		}
+	}
+}
+
+// 辅助函数：从逗号分隔的字符串中移除指定的ID
+func removeIDFromPermission(permission string, perm string) string {
+	ids := strings.Split(permission, ",")
+	result := make([]string, 0, len(ids))
+
+	for _, i := range ids {
+		if perm != i {
+			result = append(result, i)
+		}
+	}
+
+	return strings.Join(result, ",")
+}
+
+// 辅助函数：判断perm是否在permission中
+func containsPerm(permission string, perm string) bool {
+	ids := strings.Split(permission, ",")
+	for _, i := range ids {
+		if perm == i {
+			return true
+		}
+	}
+	return false
 }

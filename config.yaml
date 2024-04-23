@@ -11,6 +11,10 @@ db:
   UserName: root
   Password: 81889592
   Charset: utf8
+admin: 0,1,2 # 管理员用户id
 set:
-  baidu_aip: 24.89a848d8ab9d83e38709a2daf5215e1e.2592000.1715409929.282335-60864042
+  apiNum: 3
+  baidu_aip0: 24.89a848d8ab9d83e38709a2daf5215e1e.2592000.1715409929.282335-60864042
+  baidu_aip1: 24.c3b63bd62ce8915b09ac0cbadbb32ecd.2592000.1716016073.282335-62066975
+  baidu_aip2: 24.49a3ff3ae26faf0e7f348161d495b3b1.2592000.1716016158.282335-62067474
 # 漏洞: 任意目录上传(复制后读取)、SQL注入、JWT伪造、恶意文件下载

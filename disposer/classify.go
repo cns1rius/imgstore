@@ -21,12 +21,13 @@ func classify(c *gin.Context, filePaths []string, errors []string) {
 	)
 	types := config.Types
 	for _, path := range filePaths {
+		apiNum := 0
 		// ai.baidu.com api 识别 -> 匹配关键字
 		img, _ := os.ReadFile(path)
 		b64Img := url.QueryEscape(base64.StdEncoding.EncodeToString(img))
 		payload := strings.NewReader(fmt.Sprintf("image=%s", b64Img))
 
-		Url := "https://aip.baidubce.com/rest/2.0/image-classify/v2/advanced_general?access_token=" + config.Conf.GetString("set.baidu_aip")
+		Url := "https://aip.baidubce.com/rest/2.0/image-classify/v2/advanced_general?access_token=" + config.Conf.GetString("set.baidu_aip"+strconv.Itoa(apiNum))
 		res, err := http.Post(Url, "application/x-www-form-urlencoded", payload)
 		if !(err == nil) {
 			errors = append(errors, path)
@@ -63,6 +64,7 @@ func classify(c *gin.Context, filePaths []string, errors []string) {
 		_ = os.Rename(path, newPath)
 		// 传库
 		_ = config.ImgUpdate(newPath, config.GetCookieId(c))
+		apiNum = (apiNum + 1) % config.Conf.GetInt("set.apiNum")
 	}
 	errorStr := strings.Join(errors, "\n")
 	if errorStr == "" {
